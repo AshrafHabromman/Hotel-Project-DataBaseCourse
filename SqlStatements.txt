@@ -1,0 +1,123 @@
+Note: For insert statements we let the database empty (for now)
+
+create table PERSON (
+FName varchar(20) not null,
+LName varchar(20) not null,
+ssn number(10) primary key,
+City varchar(10) null,
+Country varchar(10) null,
+Nationality varchar(20) not null,
+CellularPhoneNum int not null unique,
+HomePhoneNum int not null unique,
+ZIPCode int null,
+Gender varchar(1) not null constraint pCh check(Gender in ('M' , 'F')),
+EmailAdd varchar(40) null unique,
+Address varchar(100) null,
+bdate date null
+);
+
+
+create table ReservationAgent(
+ssn number(10) not null unique,
+reservationAgentId int primary key ,
+salary number(4) not null ,
+section varchar(20) not null,
+constraint fk2 foreign key (ssn) references person(ssn) 
+);
+
+
+create table guest(
+ssn number(10) not null unique, 
+guestId int primary key ,
+constraint fk foreign key (ssn) references person(ssn)
+);
+
+
+create table catalogeOfRoom(
+roomId int not null primary key , 
+floor number(1) not null ,
+roomType varchar(20) not null ,
+dscr varchar(50) null , 
+roomStatus varchar(20) not null check(roomStatus between 0 and 1), 
+roomStar number(1) not null check(roomStar between 1 and 5),
+pricePerNight int not null 
+);
+
+  CREATE TABLE BOOKINGTABLE 
+   (	BOOKINGID int  PRIMARY KEY , 
+	GUESTID int NOT NULL,
+	ROOMID int NOT NULL,
+	DATEFROM DATE NOT NULL , 
+	DATETO DATE NOT NULL,
+	bookingStatus int not null check(bookingStatus between 0 and 1),
+	 CONSTRAINT GFK FOREIGN KEY (GUESTID)
+	  REFERENCES GUEST (GUESTID),
+	 CONSTRAINT ROFK FOREIGN KEY (ROOMID)
+	  REFERENCES CATALOGEOFROOM (ROOMID) 
+   );
+
+create table bookingBy(
+	Bid number not null primary key references BookingTable(bookingID),
+	Rid number not null references reservationAgent(reservationAgentID)
+);
+
+
+create table payments(
+paymentId int primary key , 
+guestId int not null unique, 
+resAgentId int not null , 
+roomId int not null, 
+bookingId number(8) not null unique,
+totalCharge int not null ,
+dateOfBill DATE not null,
+constraint gfkid foreign key (guestId) references guest(guestId),
+constraint resAgentfk foreign key (resAgentId) references ReservationAgent(reservationAgentId),
+constraint roomfk foreign key (roomId) references catalogeOfRoom(roomId),
+constraint bookingfk foreign key (bookingId) references bookingTable(bookingId)
+);
+
+// Sequences
+CREATE SEQUENCE  ID_BOOKING 
+MINVALUE 1 
+MAXVALUE 1000 
+INCREMENT BY 1 
+START WITH 1 
+NOCACHE  
+ORDER  
+NOCYCLE ;
+
+CREATE SEQUENCE  ID_GUEST
+MINVALUE 1 
+MAXVALUE 1000 
+INCREMENT BY 1 
+START WITH 1 
+NOCACHE  
+ORDER  
+NOCYCLE ;
+
+CREATE SEQUENCE  ID_RES 
+MINVALUE 1 
+MAXVALUE 1000 
+INCREMENT BY 1 
+START WITH 1 
+NOCACHE  
+ORDER  
+NOCYCLE ;
+
+CREATE SEQUENCE  ID_PAYMENT
+MINVALUE 1 
+MAXVALUE 1000 
+INCREMENT BY 1 
+START WITH 1 
+NOCACHE  
+ORDER  
+NOCYCLE ;
+
+CREATE SEQUENCE  ID_ROOM
+MINVALUE 1 
+MAXVALUE 1000 
+INCREMENT BY 1 
+START WITH 1 
+NOCACHE  
+ORDER  
+NOCYCLE ;
